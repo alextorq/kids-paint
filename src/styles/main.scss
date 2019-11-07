@@ -1,0 +1,153 @@
+body {
+  padding: 0;
+  margin: 0;
+  height :100vh;
+  overflow: hidden;
+}
+* {
+  box-sizing: border-box;
+}
+.home {
+  position: relative;
+  .tabs {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    >li {
+      width: 50%;
+      height:100vh;
+      position: relative;
+      padding-top: 40px;
+      padding-left: 40px;
+    }
+  }
+  .rule {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: rebeccapurple;
+    z-index: 10;
+    display: flex;
+    .rule__item {
+      //flex-grow: 1;
+      flex-shrink: 0;
+      text-align: center;
+
+      justify-content: center;
+      display: flex;
+      align-items: center;
+    }
+    &.vert {
+      width: 100%;
+      height: 40px;
+      padding-left: 40px;
+
+      .rule__item {
+        border-right: 1px solid white;
+        width: 4%;
+        &:last-child {
+          border-right: none;
+        }
+      }
+
+    }
+    &.gor {
+      height: 100%;
+      width: 40px;
+      flex-direction: column;
+      padding-top: 40px;
+      .rule__item {
+        border-bottom: 1px solid white;
+        width: 100%;
+        height: 4%;
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+    }
+  }
+
+
+  .design-tab {
+    border-right: 5px solid grey;
+  }
+
+
+  .grid__item {
+    width: 4%;
+    padding-bottom: 4%;
+    position: relative;
+    cursor: pointer;
+    user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    border: 1px solid grey;
+  }
+  .grid__list {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+}
+
+.palette__list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+
+}
+.palette__item {
+  width: 60px;
+  height: 40px;
+  cursor: pointer;
+  border: 1px solid grey;
+}
+
+.text-center {
+  text-align: center;
+}
+.text-bold {
+  font-weight: 700;
+}
+
+.palette-wrapper {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+
+  .title {
+    font-size: 20px;
+    text-transform: uppercase;
+    margin-top: 20px;
+    margin-bottom: 15px;
+  }
+}
+
+.btn {
+  border: none;
+  background-color: rgb(249, 174, 116);
+  padding: 10px 20px;
+  color: white;
+  border-radius: 5px;
+
+}
+.save-pic {
+  top: 40px;
+  right: 40px;
+  position: absolute;
+  z-index: 10;
+}
+.pagination-wrapper {
+  position: fixed;
+  bottom: 60px;
+  right: 60px;
+  display: flex;
+}

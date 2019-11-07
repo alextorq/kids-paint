@@ -1,58 +1,119 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
+    <button class="btn save-pic" @click="savePicture">Save picture</button>
+    <palette @chooseColor="selectColor" :colors="palette"></palette>
+
+    <ul class="tabs">
+      <li class="design-tab">
+        <div class="rule vert">
+          <div class="rule__item" v-for="i in 25" :key="'ver' + i">
+            {{i}}
+          </div>
+        </div>
+        <div class="rule gor">
+          <div class="rule__item" v-for="i in 21" :key="'gor' + i">
+            {{i}}
+          </div>
+        </div>
+        required
+        <ul class="grid__list">
+          <gridItem v-for="(item, index) in model.pixels" :key="index + item" :color="item"></gridItem>
+        </ul>
+      </li>
+
+      <li class="paint-tab">
+        you do
+        <div class="rule vert">
+          <div class="rule__item" v-for="i in 25" :key="'ver' + i">
+            {{i}}
+          </div>
+        </div>
+        <div class="rule gor">
+          <div class="rule__item" v-for="i in 21" :key="'gor' + i">
+            {{i}}
+          </div>
+        </div>
+        <ul class="grid__list"
+            @mousedown="startPaint" @mouseup="stopPaint" @mouseleave="stopPaint">
+          <gridItemActive v-for="(item, index) in paintingGrid"
+                          @mousemove.native="paintGrid(index)"
+                          @click.native="fillOneGrid(index)"
+                          :key="index + item" :color="item">
+          </gridItemActive>
+        </ul>
+      </li>
     </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <pagination></pagination>
   </div>
 </template>
 
 <script>
+  import gridItem from './grid__item.vue'
+  import gridItemActive from './grid__item_active.vue'
+  import palette from './palette.vue'
+  import pagination from './pagination'
+  import api from '../api/index'
+  import unic from '../utils/unic'
+
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String
+  data() {
+    return {
+      allModel: [],
+      model: {},
+      chooseColor: '#ffffff',
+      paintingGrid: [],
+      palette: [],
+      paintStatus: false
+    }
+  },
+  methods: {
+    selectColor(color) {
+      this.chooseColor = color;
+    },
+    paintGrid(index) {
+     if(!this.paintStatus) {return}
+
+      this.$set(this.paintingGrid, index, this.chooseColor);
+    },
+    fillOneGrid(index) {
+      this.$set(this.paintingGrid, index, this.chooseColor);
+    },
+    startPaint() {
+      this.paintStatus = true;
+
+    },
+    stopPaint() {
+      this.paintStatus = false;
+    },
+    savePicture() {
+     let name = window.prompt('inter name picture');
+      api.create({pixels: this.paintingGrid, name: name})
+    }
+  },
+  watch: {
+    paintingGrid(value) {
+      let status = value.toString() === this.model.pixels.toString();
+      if (status) {
+        this.$notify({
+          title: 'Success',
+          text: 'you are win'
+        });
+      }
+
+    }
+  },
+  components: {
+    gridItem,
+    palette,
+    gridItemActive,
+    pagination
+  },
+  async created() {
+    this.allModel = await api.loadAll();
+    this.model = this.allModel[0];
+    this.palette = unic(this.model.pixels);
+    this.paintingGrid = new Array(this.model.pixels.length).fill('#ffffff');
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-</style>
