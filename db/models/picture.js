@@ -9,6 +9,14 @@ const pictureScheme = new Schema({
     pixels: {
         type: Array,
         required: true
+    },
+    rowsAmount: {
+        type: Number,
+        required: true,
+    },
+    columnAmount: {
+        type: Number,
+        required: true
     }
 }, { autoIndex: false, versionKey: false });
 

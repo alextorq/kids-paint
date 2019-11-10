@@ -4,32 +4,41 @@
     <palette @chooseColor="selectColor" :colors="palette"></palette>
 
     <ul class="tabs">
+      <preloader v-if="modelLoaded"></preloader>
       <li class="design-tab">
         <div class="rule vert">
-          <div class="rule__item" v-for="i in 25" :key="'ver' + i">
+          <div class="rule__item" v-for="i in model.rowsAmount"
+              :class="{active: currentRuleColumn === i}"
+              :width="width" :key="'ver' + i">
             {{i}}
           </div>
         </div>
         <div class="rule gor">
-          <div class="rule__item" v-for="i in 21" :key="'gor' + i">
+          <div class="rule__item" v-for="i in model.columnAmount"
+               :class="{active: currentRuleRow === i}"
+               :key="'gor' + i">
             {{i}}
           </div>
         </div>
-        required
         <ul class="grid__list">
-          <gridItem v-for="(item, index) in model.pixels" :key="index + item" :color="item"></gridItem>
+          <gridItem v-for="(item, index) in model.pixels"
+                    :key="index + item" :color="item" :width="width">
+          </gridItem>
         </ul>
       </li>
 
       <li class="paint-tab">
-        you do
         <div class="rule vert">
-          <div class="rule__item" v-for="i in 25" :key="'ver' + i">
+          <div class="rule__item" v-for="i in model.rowsAmount"
+               :class="{active: currentRuleColumn === i}"
+               :key="'ver' + i">
             {{i}}
           </div>
         </div>
         <div class="rule gor">
-          <div class="rule__item" v-for="i in 21" :key="'gor' + i">
+          <div class="rule__item" v-for="i in model.columnAmount"
+               :class="{active: currentRuleRow === i}"
+               :key="'gor' + i">
             {{i}}
           </div>
         </div>
@@ -37,6 +46,7 @@
             @mousedown="startPaint" @mouseup="stopPaint" @mouseleave="stopPaint">
           <gridItemActive v-for="(item, index) in paintingGrid"
                           @mousemove.native="paintGrid(index)"
+                          :width="width"
                           @click.native="fillOneGrid(index)"
                           :key="index + item" :color="item">
           </gridItemActive>
@@ -53,6 +63,7 @@
   import palette from './palette.vue'
   import pagination from './pagination'
   import api from '../api/index'
+  import preloader from './preloader'
   import unic from '../utils/unic'
 
 export default {
@@ -61,10 +72,23 @@ export default {
     return {
       allModel: [],
       model: {},
+      modelLoaded: true,
       chooseColor: '#ffffff',
       paintingGrid: [],
       palette: [],
+      currentItemOver: 0,
       paintStatus: false
+    }
+  },
+  computed: {
+    currentRuleRow() {
+      return Math.floor(this.currentItemOver / this.model.columnAmount) + 1;
+    },
+    currentRuleColumn() {
+      return (this.currentItemOver % this.model.columnAmount) + 1;
+    },
+    width() {
+      return 100 / this.model.columnAmount
     }
   },
   methods: {
@@ -72,11 +96,12 @@ export default {
       this.chooseColor = color;
     },
     paintGrid(index) {
+     this.currentItemOver = index;
      if(!this.paintStatus) {return}
-
       this.$set(this.paintingGrid, index, this.chooseColor);
     },
     fillOneGrid(index) {
+      this.currentItemOver = index;
       this.$set(this.paintingGrid, index, this.chooseColor);
     },
     startPaint() {
@@ -88,7 +113,12 @@ export default {
     },
     savePicture() {
      let name = window.prompt('inter name picture');
-      api.create({pixels: this.paintingGrid, name: name})
+      api.create({pixels: this.paintingGrid, name: name}).then(() => {
+        this.$notify({
+          title: 'Success',
+          text: 'picture save'
+        });
+      })
     }
   },
   watch: {
@@ -107,13 +137,15 @@ export default {
     gridItem,
     palette,
     gridItemActive,
-    pagination
+    pagination,
+    preloader
   },
   async created() {
     this.allModel = await api.loadAll();
     this.model = this.allModel[0];
     this.palette = unic(this.model.pixels);
     this.paintingGrid = new Array(this.model.pixels.length).fill('#ffffff');
+    this.modelLoaded = false;
   }
 }
 </script>

@@ -18,4 +18,3 @@ app.use('/pic', houseRoute);
 
 
 console.log(listEndpoints(app));
-console.log(port)

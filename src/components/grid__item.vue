@@ -8,10 +8,12 @@
         computed: {
           colorBg() {
               return {
-                  backgroundColor: this.color
+                  backgroundColor: this.color,
+                  width: this.width + '%',
+                  paddingBottom: this.width + '%',
               }
           }
         },
-        props: ['color']
+        props: ['color', 'width']
     }
 </script>

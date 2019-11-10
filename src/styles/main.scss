@@ -1,3 +1,6 @@
+@import './components/preloader.scss';
+
+
 body {
   padding: 0;
   margin: 0;
@@ -11,12 +14,13 @@ body {
   position: relative;
   .tabs {
     display: flex;
+    align-items: flex-start;
     list-style: none;
     padding: 0;
     margin: 0;
     >li {
       width: 50%;
-      height:100vh;
+      //height:100vh;
       position: relative;
       padding-top: 40px;
       padding-left: 40px;
@@ -33,19 +37,22 @@ body {
       //flex-grow: 1;
       flex-shrink: 0;
       text-align: center;
-
       justify-content: center;
       display: flex;
       align-items: center;
+      &.active {
+        background-color: green;
+      }
     }
     &.vert {
       width: 100%;
-      height: 40px;
-      padding-left: 40px;
+      height: 37px;
+      padding-left: 37px;
 
       .rule__item {
         border-right: 1px solid white;
         width: 4%;
+
         &:last-child {
           border-right: none;
         }
@@ -56,11 +63,11 @@ body {
       height: 100%;
       width: 40px;
       flex-direction: column;
-      padding-top: 40px;
+      padding-top: 37px;
       .rule__item {
         border-bottom: 1px solid white;
         width: 100%;
-        height: 4%;
+        height: 37px;
         &:last-child {
           border-bottom: none;
         }
@@ -76,8 +83,6 @@ body {
 
 
   .grid__item {
-    width: 4%;
-    padding-bottom: 4%;
     position: relative;
     cursor: pointer;
     user-drag: none;
@@ -86,7 +91,17 @@ body {
     -webkit-user-drag: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    border: 1px solid grey;
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border: 1px solid lightgrey;
+    }
+
+    //box-sizing: content-box;
   }
   .grid__list {
     display: flex;
@@ -151,3 +166,4 @@ body {
   right: 60px;
   display: flex;
 }
+
