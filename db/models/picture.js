@@ -10,6 +10,10 @@ const pictureScheme = new Schema({
         type: Array,
         required: true
     },
+    colors: {
+        type: Array,
+        required: true
+    },
     rowsAmount: {
         type: Number,
         required: true,
@@ -20,6 +24,6 @@ const pictureScheme = new Schema({
     }
 }, { autoIndex: false, versionKey: false });
 
-const Picture = mongoose.model('Picture', pictureScheme);
+const Picture = mongoose.model('Picture', pictureScheme, 'pictures');
 
 module.exports = Picture;

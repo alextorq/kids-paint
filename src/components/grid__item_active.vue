@@ -9,8 +9,8 @@
           colorBg() {
               return {
                   backgroundColor: this.color,
-                  width: this.width + '%',
-                  paddingBottom: this.width + '%',
+                  width: this.width,
+                  paddingBottom: this.width,
               }
           }
         },
