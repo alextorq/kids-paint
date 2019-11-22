@@ -1,5 +1,5 @@
 @import './components/preloader.scss';
-
+@import "./components/pagination";
 
 body {
   padding: 0;
@@ -158,15 +158,11 @@ body {
   position: absolute;
   z-index: 10;
 }
-.pagination-wrapper {
-  position: fixed;
-  bottom: 60px;
-  right: 60px;
-  display: flex;
-}
+
 
 .add__color {
-  position: relative;
+  position: fixed;
+  top: 20px;
   input {
     position: absolute;
     width: 100%;
@@ -175,6 +171,12 @@ body {
     left: 0;
     bottom: 0;
     opacity: 0;
+  }
+  .add__color-btn {
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    border: none;
   }
 }
 
@@ -189,3 +191,4 @@ body {
   height: 30px;
   cursor: pointer;
 }
+

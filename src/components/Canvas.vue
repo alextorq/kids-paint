@@ -68,7 +68,7 @@
         </ul>
       </li>
     </ul>
-    <pagination @click.native="nextPicture"></pagination>
+    <pagination @next="nextPicture" @prev="prevPicture"></pagination>
   </div>
 </template>
 
@@ -81,7 +81,7 @@
   import preloader from './preloader'
 
 export default {
-  name: 'HelloWorld',
+  name: 'Canvas',
   data() {
     return {
       allModel: [],
@@ -115,13 +115,13 @@ export default {
     }
   },
   methods: {
-    recalculate() {
-        this.horizonMode = !this.horizonMode;
-
+    recalculate(event, clear = false) {
+        if(!clear) {
+          this.horizonMode = !this.horizonMode;
+        }
+        this.gridWidth = 0;
         this.$nextTick().then(() => {
-            setTimeout(() => {
-                this.gridWidth = this.$refs.gridList.scrollWidth;
-            },100);
+            this.gridWidth = this.$refs.gridList.scrollWidth;
         });
     },
     selectColor(color) {
@@ -151,24 +151,35 @@ export default {
       this.paintingGrid = new Array(this.model.pixels.length).fill('#ffffff');
     },
     nextPicture() {
-      let nextPicture = (this.currentModel + 1) % this.allModel.length;
+      const nextPicture = (this.currentModel + 1) % this.allModel.length;
       this.setPicture(nextPicture);
       this.currentModel = nextPicture;
     },
+    prevPicture() {
+      const prev = (this.currentModel > 0) ? (this.currentModel - 1) : (this.allModel.length - 1);
+      this.setPicture(prev);
+      this.currentModel = prev;
+    },
     async savePicture() {
-      let name = window.prompt('inter name picture');
-      let data = await api.create({
-        pixels: this.paintingGrid,
-        name: name,
-        colors: this.palette,
-        columnAmount: this.model.columnAmount,
-        rowsAmount: this.model.rowsAmount
-      });
-      this.allModel.push(data);
-      this.$notify({
-        title: 'Success',
-        text: 'picture save'
-      });
+      try {
+        let name = window.prompt('inter name picture');
+        await api.create({
+          pixels: this.paintingGrid,
+          name: name,
+          colors: this.palette,
+          columnAmount: this.model.columnAmount,
+          rowsAmount: this.model.rowsAmount
+        });
+        this.$notify({
+          title: 'Success',
+          text: 'picture save'
+        });
+      }catch (e) {
+        this.$notify({
+          title: 'Error',
+          text: 'Something was wrong'
+        });
+      }
     }
   },
   watch: {
@@ -179,6 +190,7 @@ export default {
           title: 'Success',
           text: 'you are win'
         });
+        this.nextPicture();
       }
     }
   },
@@ -191,6 +203,9 @@ export default {
   },
   mounted() {
     this.gridWidth = this.$refs.gridList.scrollWidth;
+    window.onresize = () => {
+      this.recalculate(null, true);
+    };
   },
   async created() {
     this.allModel = await api.loadAll();

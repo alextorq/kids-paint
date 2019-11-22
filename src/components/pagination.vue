@@ -1,7 +1,7 @@
 <template>
     <div class="pagination-wrapper">
-        <div class="prev">Prev</div>
-        <div class="next">Next</div>
+        <button class="prev btn" @click="fireEvent('prev')">Prev</button>
+        <button class="next btn" @click="fireEvent('next')">Next</button>
     </div>
 </template>
 
@@ -12,6 +12,11 @@
             return {
                 currentPage: '',
             }
+        },
+        methods: {
+          fireEvent(eventName) {
+              this.$emit(eventName);
+          }
         },
         props: ['pages']
     }
