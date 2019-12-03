@@ -40,8 +40,10 @@
         </ul>
       </li>
 
-      <li class="paint-tab" :style="{paddingLeft: widthInPixels, paddingTop: widthInPixels, width: gridWidthMode}">
-        <div class="rule vert" :style="{paddingLeft: widthInPixels, height: widthInPixels}">
+      <li class="paint-tab"
+          :style="{paddingLeft: widthInPixels, paddingTop: widthInPixels, width: gridWidthMode}">
+        <div class="rule vert"
+             :style="{paddingLeft: widthInPixels, height: widthInPixels}">
           <div class="rule__item" v-for="i in model.columnAmount"
                :class="{active: currentRuleColumn === i}"
                :style="{width: width}"
@@ -49,8 +51,10 @@
             {{i}}
           </div>
         </div>
-        <div class="rule gor" :style="{paddingTop: widthInPixels, width: widthInPixels}">
-          <div class="rule__item" v-for="i in model.rowsAmount"
+        <div class="rule gor"
+             :style="{paddingTop: widthInPixels, width: widthInPixels}">
+          <div class="rule__item"
+               v-for="i in model.rowsAmount"
                :class="{active: currentRuleRow === i}"
                :style="{height: widthInPixels}"
                :key="'gor' + i">
@@ -58,27 +62,33 @@
           </div>
         </div>
         <ul class="grid__list"
-            @mousedown="startPaint" @mouseup="stopPaint" @mouseleave="stopPaint">
-          <gridItemActive v-for="(item, index) in paintingGrid"
-                          @mousemove.native="paintGrid(index)"
-                          :width="width"
-                          @click.native="fillOneGrid(index)"
-                          :key="index + item" :color="item">
-          </gridItemActive>
+            @mousedown="startPaint"
+            @mouseup="stopPaint"
+            @mouseleave="stopPaint">
+          <gridItem
+            class="border"
+            v-for="(item, index) in paintingGrid"
+            @mousemove.native="paintGrid(index)"
+            :width="width"
+            @click.native="fillOneGrid(index)"
+            :key="index + item" :color="item">
+          </gridItem>
         </ul>
       </li>
     </ul>
-    <pagination @next="nextPicture" @prev="prevPicture"></pagination>
+    <pagination
+      @next="nextPicture"
+      @prev="prevPicture">
+    </pagination>
   </div>
 </template>
 
 <script>
-  import gridItem from './grid__item.vue'
-  import gridItemActive from './grid__item_active.vue'
-  import palette from './palette.vue'
-  import pagination from './pagination'
-  import api from '../api/index'
-  import preloader from './preloader'
+import gridItem from './grid__item.vue'
+import palette from './palette.vue'
+import pagination from './pagination'
+import api from '../api/index'
+import preloader from './preloader'
 
 export default {
   name: 'Canvas',
@@ -197,7 +207,6 @@ export default {
   components: {
     gridItem,
     palette,
-    gridItemActive,
     pagination,
     preloader
   },
@@ -208,7 +217,8 @@ export default {
     };
   },
   async created() {
-    this.allModel = await api.loadAll();
+    const {data} = await api.loadAll();
+    this.allModel = data;
     this.setPicture(0);
     this.modelLoaded = false;
   }

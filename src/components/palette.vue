@@ -4,7 +4,8 @@
             choose color
         </div>
         <div class="palette__list">
-            <div class="palette__item" v-for="(color, index) in colors"
+            <div class="palette__item"
+                 v-for="(color, index) in colors"
                  @click="chooseColor(color)"
                  :key="index + color" :style="{backgroundColor: color}">
             </div>
@@ -57,13 +58,13 @@
     export default {
         data() {
           return {
-              additionalColor: '#ff0000'
+              additionalColor: '#ff0000',
           }
         },
         name: "palette",
         methods: {
             chooseColor(color) {
-                this.$emit('chooseColor', color)
+                this.$emit('chooseColor', color);
             },
             addNewColor() {
                 this.$emit('addNewColor', this.additionalColor);
