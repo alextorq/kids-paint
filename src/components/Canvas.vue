@@ -16,6 +16,11 @@
       </button>
     <palette @chooseColor="selectColor" :colors="palette" @addNewColor="addNewColor"></palette>
 
+    <label>
+      <input type="checkbox" v-model="hideGuides">
+      Hide Guides
+    </label>
+
     <ul class="tabs">
       <preloader v-if="modelLoaded"></preloader>
       <li class="design-tab" :style="{paddingLeft: widthInPixels, paddingTop: widthInPixels, width: gridWidthMode}">
@@ -23,7 +28,7 @@
           <div
               class="rule__item"
               v-for="i in model.columnAmount"
-              :class="{active: currentRuleColumn === i}"
+              :class="{active: currentRuleColumn === i && !hideGuides}"
               :style="{width: width}"
               :key="'ver' + i">
               <span>{{i}}</span>
@@ -33,7 +38,7 @@
           <div
                class="rule__item"
                v-for="i in model.rowsAmount"
-               :class="{active: currentRuleRow === i}"
+               :class="{active: currentRuleRow === i && !hideGuides}"
                :key="'gor' + i"
                :style="{height: widthInPixels}">
               <span>{{i}}</span>
@@ -44,6 +49,7 @@
                     :info="item"
                     :key="index + 'left'"
                     :currentRow="currentRuleRow"
+                    :hideGuides="hideGuides"
                     :currentColumn="currentRuleColumn"
                     :width="width">
           </gridItem>
@@ -57,7 +63,7 @@
           <div
             class="rule__item"
             v-for="i in model.columnAmount"
-            :class="{active: currentRuleColumn === i}"
+            :class="{active: currentRuleColumn === i && !hideGuides}"
             :style="{width: width}"
             :key="'ver' + i">
             <span>{{i}}</span>
@@ -67,7 +73,7 @@
              :style="{paddingTop: widthInPixels, width: widthInPixels}">
           <div class="rule__item"
             v-for="i in model.rowsAmount"
-            :class="{active: currentRuleRow === i}"
+            :class="{active: currentRuleRow === i && !hideGuides}"
             :style="{height: widthInPixels}"
             :key="'gor' + i">
             <span>{{i}}</span>
@@ -83,6 +89,7 @@
             @mousemove="paintGrid"
             @click="paint"
             :width="width"
+            :hideGuides="hideGuides"
             :currentRow="currentRuleRow"
             :currentColumn="currentRuleColumn"
             :index="index"
@@ -112,6 +119,7 @@ export default {
   name: 'Canvas',
   data() {
     return {
+      hideGuides: false,
       allModel: [],
       model: {},
       modelLoaded: true,

@@ -8,10 +8,23 @@ class History {
         this.buffer.push(item)
     }
 
+
+    filterUnic(buffer) {
+        const result = [];
+        const resultID = [];
+        for (const item of buffer) {
+            if (!resultID.includes(item.index)) {
+                result.push(item)
+                resultID.push(item.index)
+            }
+        }
+        return result;
+    }
+
     addToHistory() {
         if (this.buffer.length) {
             this.history.push({
-                payload: [...this.buffer],
+                payload: this.filterUnic(this.buffer),
                 meta: {
                     time: Date.now()
                 }

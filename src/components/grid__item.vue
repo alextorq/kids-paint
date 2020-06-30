@@ -16,10 +16,15 @@
         name: "grid__item",
         computed: {
             classes() {
+                if (this.hideGuides) {
+                    return {}
+                }
+                const row = this.currentRow - 1
+                const col = this.currentColumn - 1
                 return {
-                    row: this.info.row === (this.currentRow - 1) && (this.currentColumn - 1) >= this.info.col,
-                    col: this.info.col === (this.currentColumn - 1) && (this.currentRow - 1) >= this.info.row,
-                    current: this.info.row === (this.currentRow - 1) && (this.currentColumn - 1) === this.info.col
+                    row: this.info.row === row && col >= this.info.col,
+                    col: this.info.col === col && row >= this.info.row,
+                    current: this.info.row === row && col === this.info.col
                 }
             },
           colorBg() {
@@ -45,6 +50,10 @@
             currentColumn: {
                 type: Number,
                 default: 1,
+            },
+            hideGuides: {
+                type: Boolean,
+                default: false,
             }
         },
     }
