@@ -13,7 +13,7 @@ app.listen(port);
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static(appRoot + '/public'));
+app.use(express.static(appRoot + '/dist'));
 app.use('/pic', houseRoute);
 
 
