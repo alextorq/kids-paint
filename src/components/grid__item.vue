@@ -1,9 +1,13 @@
 <template>
     <li
-        @mouseover.passive="!leftSide ? $emit('mousemove', {index, color}) : null"
-        @mousedown.passive="!leftSide ? $emit('click', {index, color}) : null"
+        @mouseover.passive="$emit('mousemove', info)"
+        @mousedown.passive="$emit('click', info)"
         class="grid__item"
+        :class="classes"
         :style="colorBg">
+        <span class="top_bottom"></span>
+        <span class="left_right">
+        </span>
     </li>
 </template>
 
@@ -11,29 +15,36 @@
     export default {
         name: "grid__item",
         computed: {
+            classes() {
+                return {
+                    row: this.info.row === (this.currentRow - 1) && (this.currentColumn - 1) >= this.info.col,
+                    col: this.info.col === (this.currentColumn - 1) && (this.currentRow - 1) >= this.info.row,
+                    current: this.info.row === (this.currentRow - 1) && (this.currentColumn - 1) === this.info.col
+                }
+            },
           colorBg() {
               return {
-                  backgroundColor: this.color,
+                  backgroundColor: this.info.color,
                   width: this.width,
                   paddingBottom: this.width,
               }
           }
         },
         props: {
-            color: {
-                type: String,
-                default: '#ffffff',
+            info: {
+                type: Object,
+                required: true
             },
             width: {
                 type: String
             },
-            index: {
-              type: Number,
-              required: true
+            currentRow: {
+                type: Number,
+                default: 1,
             },
-            leftSide: {
-                type: Boolean,
-                default: false,
+            currentColumn: {
+                type: Number,
+                default: 1,
             }
         },
     }

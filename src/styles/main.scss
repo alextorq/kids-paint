@@ -117,6 +117,41 @@ body {
       right: 0;
       border: 1px solid lightgrey;
     }
+    span {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      opacity: 0;
+      will-change: opacity;
+      z-index: 5;
+    }
+
+    .top_bottom {
+      border-bottom: 1px solid red;
+      border-top: 1px solid red;
+    }
+    .left_right {
+      border-left: 1px solid red;
+      border-right: 1px solid red;
+    }
+
+    &.row {
+      .top_bottom {
+        opacity: 1;
+      }
+    }
+    &.col {
+      .left_right {
+        opacity: 1;
+      }
+    }
+    &.current {
+      &:after {
+        border-color: black;
+      }
+    }
 
     //box-sizing: content-box;
   }

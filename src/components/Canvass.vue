@@ -43,8 +43,6 @@
           <gridItem v-for="(item, index) in referencePicture"
                     :info="item"
                     :key="index + 'left'"
-                    :currentRow="currentRuleRow"
-                    :currentColumn="currentRuleColumn"
                     :width="width">
           </gridItem>
         </ul>
@@ -83,8 +81,6 @@
             @mousemove="paintGrid"
             @click="paint"
             :width="width"
-            :currentRow="currentRuleRow"
-            :currentColumn="currentRuleColumn"
             :index="index"
             :key="index"
             :info="item">
@@ -131,10 +127,10 @@ export default {
       return (this.gridWidth / (this.model.columnAmount + 1)) + 'px';
     },
     currentRuleRow() {
-      return this.currentItemOver.row + 1;
+      return this.currentItemOver.row;
     },
     currentRuleColumn() {
-      return this.currentItemOver.col + 1;
+      return this.currentItemOver.col;
     },
     width() {
       return 100 / this.model.columnAmount + '%';
@@ -148,23 +144,21 @@ export default {
       this.chooseColor = color;
     },
     paintGrid(item) {
-      this.currentItemOver = item;
       if(!this.paintStatus) {return}
       this.paint(item);
     },
     restoreFromHistory() {
       const steps = History.restoreStep();
       if (steps) {
-        steps.forEach((item) => {
-          const index = this.userPicture.findIndex(one => one.index === item.index)
-          this.userPicture.splice(index, 1, item);
-        })
+        // steps.forEach(({index, color}) => {
+        //   item.color = this.chooseColor;
+        // })
       }
     },
     paint(item) {
-      History.addToBuffer(JSON.parse(JSON.stringify(item)));
       this.currentItemOver = item;
       item.color = this.chooseColor;
+      History.addToBuffer(item);
     },
     startPaint() {
       this.paintStatus = true;
