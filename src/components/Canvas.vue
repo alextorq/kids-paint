@@ -20,22 +20,33 @@
       <preloader v-if="modelLoaded"></preloader>
       <li class="design-tab" :style="{paddingLeft: widthInPixels, paddingTop: widthInPixels, width: gridWidthMode}">
         <div class="rule vert" :style="{paddingLeft: widthInPixels, height: widthInPixels}">
-          <div class="rule__item" v-for="i in model.columnAmount"
+          <div
+              class="rule__item"
+              v-for="i in model.columnAmount"
               :class="{active: currentRuleColumn === i}"
-              :style="{width: width}" :key="'ver' + i">
-            {{i}}
+              :style="{width: width}"
+              :key="'ver' + i">
+              <span>{{i}}</span>
           </div>
         </div>
         <div class="rule gor" :style="{width: widthInPixels, paddingTop: widthInPixels}">
-          <div class="rule__item" v-for="i in model.rowsAmount"
+          <div
+               class="rule__item"
+               v-for="i in model.rowsAmount"
                :class="{active: currentRuleRow === i}"
-               :key="'gor' + i" :style="{height: widthInPixels}">
-            {{i}}
+               :key="'gor' + i"
+               :style="{height: widthInPixels}">
+              <span>{{i}}</span>
           </div>
         </div>
         <ul class="grid__list" ref="gridList">
           <gridItem v-for="(item, index) in model.pixels"
-                    :key="index + item" :color="item" :width="width">
+                    :index="index"
+                    :key="index + item"
+                    @mousemove="paintGrid"
+                    :color="item"
+                    leftSide
+                    :width="width">
           </gridItem>
         </ul>
       </li>
@@ -44,34 +55,38 @@
           :style="{paddingLeft: widthInPixels, paddingTop: widthInPixels, width: gridWidthMode}">
         <div class="rule vert"
              :style="{paddingLeft: widthInPixels, height: widthInPixels}">
-          <div class="rule__item" v-for="i in model.columnAmount"
-               :class="{active: currentRuleColumn === i}"
-               :style="{width: width}"
-               :key="'ver' + i">
-            {{i}}
+          <div
+            class="rule__item"
+            v-for="i in model.columnAmount"
+            :class="{active: currentRuleColumn === i}"
+            :style="{width: width}"
+            :key="'ver' + i">
+            <span>{{i}}</span>
           </div>
         </div>
         <div class="rule gor"
              :style="{paddingTop: widthInPixels, width: widthInPixels}">
           <div class="rule__item"
-               v-for="i in model.rowsAmount"
-               :class="{active: currentRuleRow === i}"
-               :style="{height: widthInPixels}"
-               :key="'gor' + i">
-            {{i}}
+            v-for="i in model.rowsAmount"
+            :class="{active: currentRuleRow === i}"
+            :style="{height: widthInPixels}"
+            :key="'gor' + i">
+            <span>{{i}}</span>
           </div>
         </div>
         <ul class="grid__list"
-            @mousedown="startPaint"
-            @mouseup="stopPaint"
-            @mouseleave="stopPaint">
+            @mousedown.passive="startPaint"
+            @mouseup.passive="stopPaint"
+            @mouseleave.passive="stopPaint">
           <gridItem
             class="border"
             v-for="(item, index) in paintingGrid"
-            @mousemove.native="paintGrid(index)"
+            @mousemove="paintGrid"
+            @click="paint"
             :width="width"
-            @click.native="fillOneGrid(index)"
-            :key="index + item" :color="item">
+            :index="index"
+            :key="index"
+            :color="item">
           </gridItem>
         </ul>
       </li>
@@ -89,6 +104,9 @@ import palette from './palette.vue'
 import pagination from './pagination'
 import api from '../api/index'
 import preloader from './preloader'
+
+
+let HISTORY = [];
 
 export default {
   name: 'Canvas',
@@ -137,14 +155,28 @@ export default {
     selectColor(color) {
       this.chooseColor = color;
     },
-    paintGrid(index) {
-     this.currentItemOver = index;
-     if(!this.paintStatus) {return}
-      this.$set(this.paintingGrid, index, this.chooseColor);
+    addToHistory(index, color) {
+      HISTORY.push({
+        index, color
+      })
     },
-    fillOneGrid(index) {
+    paintGrid({index, color}) {
+      this.currentItemOver = index;
+      if(!this.paintStatus || color === this.chooseColor) {return}
+      this.paint({index, color});
+    },
+    restoreFromHistory() {
+      if (!HISTORY.length) return
+      const { index, color } = HISTORY.pop();
+      this.$set(this.paintingGrid, index, color);
+    },
+    clearHistory() {
+      HISTORY = [];
+    },
+    paint({index, color}) {
       this.currentItemOver = index;
       this.$set(this.paintingGrid, index, this.chooseColor);
+      this.$nextTick().then(() => this.addToHistory(index, color))
     },
     startPaint() {
       this.paintStatus = true;
@@ -159,6 +191,7 @@ export default {
       this.model = this.allModel[number];
       this.palette = this.model.colors;
       this.paintingGrid = new Array(this.model.pixels.length).fill('#ffffff');
+      this.clearHistory();
     },
     nextPicture() {
       const nextPicture = (this.currentModel + 1) % this.allModel.length;
@@ -215,6 +248,12 @@ export default {
     window.onresize = () => {
       this.recalculate(null, true);
     };
+
+    document.addEventListener('keydown', event => {
+      if (event.ctrlKey && event.code === 'KeyZ') {
+        this.restoreFromHistory()
+      }
+    })
   },
   async created() {
     const {data} = await api.loadAll();

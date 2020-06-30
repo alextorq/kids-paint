@@ -1,5 +1,10 @@
 <template>
-    <li class="grid__item" :style="colorBg"></li>
+    <li
+        @mouseover.passive="!leftSide ? $emit('mousemove', {index, color}) : null"
+        @mousedown.passive="!leftSide ? $emit('click', {index, color}) : null"
+        class="grid__item"
+        :style="colorBg">
+    </li>
 </template>
 
 <script>
@@ -14,6 +19,22 @@
               }
           }
         },
-        props: ['color', 'width']
+        props: {
+            color: {
+                type: String,
+                default: '#ffffff',
+            },
+            width: {
+                type: String
+            },
+            index: {
+              type: Number,
+              required: true
+            },
+            leftSide: {
+                type: Boolean,
+                default: false,
+            }
+        },
     }
 </script>

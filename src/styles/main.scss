@@ -41,8 +41,27 @@ body {
       justify-content: center;
       display: flex;
       align-items: center;
-      &.active {
+      position: relative;
+      span {
+        position: relative;
+        z-index: 2;
+      }
+      &:after {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        content: '';
+        opacity: 0;
+        z-index: 1;
         background-color: green;
+        will-change: opacity;
+      }
+      &.active {
+        &:after {
+          opacity: 1;
+        }
       }
     }
     &.vert {

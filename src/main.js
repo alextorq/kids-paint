@@ -3,8 +3,10 @@ import App from './App.vue'
 import router from './router'
 import Notifications from 'vue-notification'
 
+Vue.config.keyCodes.z = 90
+
 Vue.use(Notifications);
-Vue.config.productionTip = false;
+Vue.config.production = false;
 
 new Vue({
   router,
