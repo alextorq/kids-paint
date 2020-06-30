@@ -1,5 +1,5 @@
 # kids-paint
-##Pixel Art
+## Pixel Art
 
 ![image](https://i.imgur.com/mVQX2wU.png)
 ## Project setup
