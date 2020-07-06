@@ -5,7 +5,7 @@ class History {
     }
 
     addToBuffer(item) {
-        this.buffer.push(item)
+        this.buffer.push(JSON.parse(JSON.stringify(item)))
     }
 
 

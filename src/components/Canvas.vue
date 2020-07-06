@@ -15,7 +15,6 @@
             </svg>
       </button>
     <palette @chooseColor="selectColor" :colors="palette" @addNewColor="addNewColor"></palette>
-
     <label>
       <input type="checkbox" v-model="hideGuides">
       Hide Guides
@@ -23,7 +22,8 @@
 
     <ul class="tabs">
       <preloader v-if="modelLoaded"/>
-      <li class="design-tab" :style="{paddingLeft: widthInPixels, paddingTop: widthInPixels, width: gridWidthMode}">
+
+      <li class="design-tab" :style="tabStyle">
         <guides :width="width"
                 :columns="model.columnAmount"
                 :rows="model.rowsAmount"
@@ -48,7 +48,7 @@
         </ul>
       </li>
 
-      <li class="paint-tab" :style="{paddingLeft: widthInPixels, paddingTop: widthInPixels, width: gridWidthMode}">
+      <li class="paint-tab" :style="tabStyle">
         <guides :width="width"
                 :columns="model.columnAmount"
                 :rows="model.rowsAmount"
@@ -104,18 +104,25 @@ export default {
       allModel: [],
       model: {},
       modelLoaded: true,
-      chooseColor: '#ffffff',
+      currentModel: 0,
       userPicture: [],
       referencePicture: [],
       palette: [],
+      chooseColor: '#ffffff',
       currentItemOver: {},
       gridWidth: 0,
       paintStatus: false,
-      currentModel: 0,
       horizonMode: true
     }
   },
   computed: {
+    tabStyle() {
+      return {
+        paddingLeft: this.widthInPixels,
+        paddingTop: this.widthInPixels,
+        width: this.gridWidthMode
+      }
+    },
     widthInPixels() {
       return (this.gridWidth / (this.model.columnAmount + 1)) + 'px';
     },
@@ -154,7 +161,7 @@ export default {
       }
     },
     paint(item) {
-      History.addToBuffer(JSON.parse(JSON.stringify(item)));
+      History.addToBuffer(item);
       this.currentItemOver = item;
       item.color = this.chooseColor;
     },
@@ -241,7 +248,7 @@ export default {
     guides,
   },
   mounted() {
-    this.gridWidth = this.$refs.gridList.scrollWidth;
+    this.recalculate(null, true);
     window.onresize = () => {
       this.recalculate(null, true);
     };
@@ -257,6 +264,7 @@ export default {
     this.allModel = data;
     this.setPicture(0);
     this.modelLoaded = false;
+    this.recalculate(null, true);
   }
 }
 </script>
