@@ -22,29 +22,21 @@
     </label>
 
     <ul class="tabs">
-      <preloader v-if="modelLoaded"></preloader>
+      <preloader v-if="modelLoaded"/>
       <li class="design-tab" :style="{paddingLeft: widthInPixels, paddingTop: widthInPixels, width: gridWidthMode}">
-        <div class="rule vert" :style="{paddingLeft: widthInPixels, height: widthInPixels}">
-          <div
-              class="rule__item"
-              v-for="i in model.columnAmount"
-              :class="{active: currentRuleColumn === i && !hideGuides}"
-              :style="{width: width}"
-              :key="'ver' + i">
-              <span>{{i}}</span>
-          </div>
-        </div>
-        <div class="rule gor" :style="{width: widthInPixels, paddingTop: widthInPixels}">
-          <div
-               class="rule__item"
-               v-for="i in model.rowsAmount"
-               :class="{active: currentRuleRow === i && !hideGuides}"
-               :key="'gor' + i"
-               :style="{height: widthInPixels}">
-              <span>{{i}}</span>
-          </div>
-        </div>
+        <guides :width="width"
+                :columns="model.columnAmount"
+                :rows="model.rowsAmount"
+                :currentRuleRow="currentRuleRow"
+                :currentRuleColumn="currentRuleColumn"
+                :widthInPixels="widthInPixels"/>
         <ul class="grid__list" ref="gridList">
+          <rules :width="widthFloat"
+                 :hideGuides="hideGuides"
+                 :widthInPixels="widthInPixels"
+                 :currentRow="currentRuleRow"
+                 :currentColumn="currentRuleColumn"
+          ></rules>
           <gridItem v-for="(item, index) in referencePicture"
                     :info="item"
                     :key="index + 'left'"
@@ -56,42 +48,29 @@
         </ul>
       </li>
 
-      <li class="paint-tab"
-          :style="{paddingLeft: widthInPixels, paddingTop: widthInPixels, width: gridWidthMode}">
-        <div class="rule vert"
-             :style="{paddingLeft: widthInPixels, height: widthInPixels}">
-          <div
-            class="rule__item"
-            v-for="i in model.columnAmount"
-            :class="{active: currentRuleColumn === i && !hideGuides}"
-            :style="{width: width}"
-            :key="'ver' + i">
-            <span>{{i}}</span>
-          </div>
-        </div>
-        <div class="rule gor"
-             :style="{paddingTop: widthInPixels, width: widthInPixels}">
-          <div class="rule__item"
-            v-for="i in model.rowsAmount"
-            :class="{active: currentRuleRow === i && !hideGuides}"
-            :style="{height: widthInPixels}"
-            :key="'gor' + i">
-            <span>{{i}}</span>
-          </div>
-        </div>
+      <li class="paint-tab" :style="{paddingLeft: widthInPixels, paddingTop: widthInPixels, width: gridWidthMode}">
+        <guides :width="width"
+                :columns="model.columnAmount"
+                :rows="model.rowsAmount"
+                :currentRuleRow="currentRuleRow"
+                :currentRuleColumn="currentRuleColumn"
+                :widthInPixels="widthInPixels"/>
         <ul class="grid__list"
             @mousedown.passive="startPaint"
             @mouseup.passive="stopPaint"
             @mouseleave.passive="stopPaint">
+          <rules :width="widthFloat"
+                 :widthInPixels="widthInPixels"
+                 :hideGuides="hideGuides"
+                 :currentRow="currentRuleRow"
+                 :currentColumn="currentRuleColumn"
+          ></rules>
           <gridItem
             class="border"
             v-for="(item, index) in userPicture"
             @mousemove="paintGrid"
             @click="paint"
             :width="width"
-            :hideGuides="hideGuides"
-            :currentRow="currentRuleRow"
-            :currentColumn="currentRuleColumn"
             :index="index"
             :key="index"
             :info="item">
@@ -114,6 +93,8 @@ import api from '../api/index'
 import preloader from './preloader'
 import History from "../utils/History";
 import items from "../utils/Matrix";
+import rules from './Rules'
+import guides from './Guides'
 
 export default {
   name: 'Canvas',
@@ -146,6 +127,9 @@ export default {
     },
     width() {
       return 100 / this.model.columnAmount + '%';
+    },
+    widthFloat() {
+      return 100 / this.model.columnAmount;
     },
     gridWidthMode() {
         return this.horizonMode ? '50%' : '100%';
@@ -252,7 +236,9 @@ export default {
     gridItem,
     palette,
     pagination,
-    preloader
+    preloader,
+    rules,
+    guides,
   },
   mounted() {
     this.gridWidth = this.$refs.gridList.scrollWidth;

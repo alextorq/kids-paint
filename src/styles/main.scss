@@ -156,6 +156,7 @@ body {
     //box-sizing: content-box;
   }
   .grid__list {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     padding: 0;
